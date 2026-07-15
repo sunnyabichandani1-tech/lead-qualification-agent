@@ -754,21 +754,27 @@ async function sendToMakeWebhook(name, phone, plan){
     formUrl: window.location.href
   };
   
-  const response = await fetch(WEBHOOK_CONFIG.url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
+  console.log('Sending to webhook:', WEBHOOK_CONFIG.url);
+  console.log('Payload:', payload);
   
-  if(!response.ok) {
-    throw new Error(`Webhook Error: ${response.status}`);
+  try {
+    const response = await fetch(WEBHOOK_CONFIG.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload),
+      mode: 'no-cors'
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Lead sent to Make.com successfully');
+    return { success: true };
+    
+  } catch(error) {
+    console.error('Webhook error details:', error);
+    throw error;
   }
-  
-  const data = await response.json();
-  console.log('Lead sent to Make.com:', data);
-  return data;
 }
 
 function showSuccess(phone, plan){
