@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="AI Lead Qualification Agent — Built by Sunny Abichandani"/>
+<title>AI Lead Qualification Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border:none;}
+:root{
+  --primary:#3B82F6;--primary-dark:#1E40AF;--primary-light:#EFF6FF;
+  --secondary:#8B5CF6;--accent:#10B981;--accent-light:#ECFDF5;
+  --gray-900:#111827;--gray-700:#374151;--gray-500:#6B7280;--gray-300:#D1D5DB;--gray-100:#F3F4F6;--gray-50:#F9FAFB;
+  --white:#FFFFFF;--border:#E5E7EB;
+  --font:'Inter',sans-serif;
+}
+
+html,body{
+  font-family:var(--font);
+  background:var(--white);
+  color:var(--gray-900);
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.nav{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  height:64px;
+  padding:0 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:18px;
+  color:var(--primary);
+}
+
+.logo-icon{
+  width:32px;
+  height:32px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:700;
+  font-size:14px;
+}
+
+.builder-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:var(--gray-500);
+}
+
+.builder-badge{
+  background:var(--primary-light);
+  color:var(--primary);
+  padding:2px 8px;
+  border-radius:4px;
+  font-weight:600;
+  font-size:11px;
+}
+
+.builder-badge.airtel{
+  background:rgba(228,0,43,0.1);
+  color:#E4002B;
+}
+
+.landing-container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  overflow:hidden;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.hero h1{
+  font-size:42px;
+  font-weight:700;
+  color:var(--gray-900);
+  line-height:1.2;
+  margin-bottom:12px;
+}
+
+.hero h1 span{
+  color:var(--primary);
+}
+
+.hero p{
+  font-size:16px;
+  color:var(--gray-500);
+  margin:0;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--gray-900);
+  margin-bottom:24px;
+  text-align:center;
+}
+
+.steps-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  max-width:600px;
+  margin-bottom:40px;
+}
+
+.step-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  text-align:center;
+  transition:all 0.2s;
+}
+
+.step-card:hover{
+  border-color:var(--primary);
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.step-number{
+  width:40px;
+  height:40px;
+  background:var(--primary);
+  color:white;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:700;
+  margin:0 auto 12px;
+}
+
+.step-title{
+  font-size:16px;
+  font-weight:700;
+  color:var(--gray-900);
+  margin-bottom:6px;
+}
+
+.step-desc{
+  font-size:13px;
+  color:var(--gray-500);
+  line-height:1.5;
+  margin-bottom:8px;
+}
+
+.step-hint{
+  font-size:11px;
+  color:var(--gray-400);
+  font-weight:500;
+}
+
+.get-started-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white;
+  padding:14px 40px;
+  border-radius:50px;
+  font-size:15px;
+  font-weight:700;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;
+  box-shadow:0 4px 16px rgba(59,130,246,0.4);
+  display:inline-block;
+  text-decoration:none;
+}
+
+.get-started-btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 8px 24px rgba(59,130,246,0.5);
+}
+
+.get-started-btn:active{
+  transform:scale(1.02);
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(2px);
+}
+
+.modal-overlay.open{
+  display:flex;
+}
+
+.form-modal{
+  background:var(--white);
+  border-radius:16px;
+  width:100%;
+  max-width:600px;
+  max-height:90vh;
+  box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  animation:slideUp 0.3s ease-out;
+  overflow-y:auto;
+}
+
+@keyframes slideUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.form-header{
+  padding:32px 32px 0;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+}
+
+.form-header h2{
+  font-size:24px;
+  font-weight:700;
+  color:var(--gray-900);
+  margin:0 0 4px 0;
+}
+
+.form-header p{
+  font-size:14px;
+  color:var(--gray-500);
+  margin:0;
+}
+
+.close-btn{
+  width:32px;
+  height:32px;
+  background:var(--gray-100);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  color:var(--gray-600);
+  cursor:pointer;
+  transition:all 0.2s;
+}
+
+.close-btn:hover{
+  background:var(--gray-200);
+}
+
+.form-body{
+  padding:32px;
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--gray-700);
+  margin-bottom:8px;
+}
+
+.form-input{
+  width:100%;
+  height:48px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:0 14px;
+  font-size:15px;
+  font-family:var(--font);
+  color:var(--gray-900);
+  transition:border-color 0.2s;
+}
+
+.form-input:focus{
+  border-color:var(--primary);
+}
+
+.form-input::placeholder{
+  color:var(--gray-400);
+}
+
+.phone-input-wrapper{
+  display:flex;
+  gap:10px;
+  align-items:stretch;
+}
+
+.phone-prefix{
+  background:var(--gray-100);
+  padding:0 12px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  font-weight:600;
+  color:var(--gray-700);
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.phone-input-wrapper .form-input{
+  flex:1;
+  margin-bottom:0;
+}
+
+.plans-label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--gray-700);
+  margin:28px 0 16px 0;
+}
+
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.plan-card{
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  cursor:pointer;
+  transition:all 0.2s;
+  background:var(--white);
+}
+
+.plan-card:hover{
+  border-color:var(--primary);
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.plan-card.selected{
+  border-color:var(--primary);
+  background:var(--primary-light);
+}
+
+.plan-price{
+  font-size:18px;
+  font-weight:700;
+  color:var(--gray-900);
+  margin-bottom:2px;
+}
+
+.plan-price-sub{
+  font-size:12px;
+  color:var(--gray-500);
+  font-weight:400;
+}
+
+.plan-speed{
+  font-size:13px;
+  font-weight:600;
+  color:var(--gray-700);
+  margin:8px 0 10px 0;
+}
+
+.plan-otts{
+  display:flex;
+  gap:6px;
+  padding-top:10px;
+  border-top:1px solid var(--border);
+}
+
+.ott-icon{
+  width:22px;
+  height:22px;
+  border-radius:3px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:700;
+  color:white;
+}
+
+.ott-netflix{
+  background:#E50914;
+}
+
+.ott-prime{
+  background:#00A8E0;
+}
+
+.ott-hotstar{
+  background:#1F80E0;
+}
+
+.form-submit{
+  width:100%;
+  height:48px;
+  background:var(--primary);
+  color:white;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:700;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:background 0.2s;
+}
+
+.form-submit:hover{
+  background:var(--primary-dark);
+}
+
+.form-submit:disabled{
+  background:var(--gray-300);
+  cursor:not-allowed;
+}
+
+.form-submit.loading{
+  opacity:0.7;
+  cursor:wait;
+}
+
+.success-modal{
+  background:var(--white);
+  border-radius:16px;
+  width:100%;
+  max-width:480px;
+  padding:40px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  animation:zoomIn 0.3s ease-out;
+}
+
+@keyframes zoomIn{
+  from{
+    opacity:0;
+    transform:scale(0.95);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.success-icon{
+  width:80px;
+  height:80px;
+  background:linear-gradient(135deg,var(--accent),#059669);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 24px;
+  font-size:40px;
+}
+
+.success-title{
+  font-size:24px;
+  font-weight:700;
+  color:var(--gray-900);
+  margin-bottom:12px;
+}
+
+.success-desc{
+  font-size:15px;
+  color:var(--gray-500);
+  line-height:1.6;
+  margin-bottom:24px;
+}
+
+.success-detail{
+  background:var(--gray-50);
+  border-radius:10px;
+  padding:16px;
+  margin-bottom:28px;
+  text-align:left;
+  font-size:13px;
+  color:var(--gray-700);
+}
+
+.success-detail strong{
+  color:var(--gray-900);
+}
+
+.success-detail div{
+  margin-bottom:6px;
+  line-height:1.6;
+}
+
+.success-cta{
+  width:100%;
+  height:48px;
+  background:var(--primary);
+  color:white;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:700;
+  font-family:var(--font);
+  cursor:pointer;
+}
+
+.success-cta:hover{
+  background:var(--primary-dark);
+}
+
+@media(max-width:768px){
+  .nav{
+    padding:0 20px;
+  }
+  
+  .landing-container{
+    padding:20px;
+  }
+  
+  .hero h1{
+    font-size:28px;
+  }
+  
+  .steps-grid{
+    grid-template-columns:1fr;
+    max-width:100%;
+  }
+  
+  .form-modal{
+    max-width:90vw;
+  }
+  
+  .builder-info{
+    display:none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <a class="logo" href="#" style="text-decoration:none;">
+      <div class="logo-icon">AI</div>
+      <span>Lead Qualifier</span>
+    </a>
+  </div>
+  <div class="builder-info">
+    <span>Built by</span>
+    <span class="builder-badge">Sunny Abichandani</span>
+    <span>DGM • Senior PM</span>
+    <span style="color:var(--gray-300);">•</span>
+    <span class="builder-badge airtel">Bharti Airtel</span>
+  </div>
+</div>
+
+<div class="landing-container">
+  <div class="hero">
+    <h1>AI Lead <span>Qualification Agent</span></h1>
+    <p>Fill the form • Get called instantly • Connected to the right team</p>
+  </div>
+
+  <div class="section-title">How it works</div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-title">Fill the Lead Form</div>
+      <div class="step-desc">Add your name, number and plan preference</div>
+      <div class="step-hint">Takes 60 seconds</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <div class="step-title">Instant AI Call</div>
+      <div class="step-desc">Our AI agent calls you immediately</div>
+      <div class="step-hint">No waiting in queue</div>
+    </div>
+  </div>
+
+  <button class="get-started-btn" onclick="openForm()">Get Started →</button>
+</div>
+
+
+<div class="modal-overlay" id="form-modal">
+  <div class="form-modal">
+    <div class="form-header">
+      <div>
+        <h2>Join us</h2>
+        <p>Fill in your details to get called by our AI agent</p>
+      </div>
+      <button class="close-btn" onclick="closeForm()">✕</button>
+    </div>
+
+    <div class="form-body">
+      <form onsubmit="submitForm(event)">
+        
+        <div class="form-group">
+          <label class="form-label">Your name *</label>
+          <input class="form-input" type="text" id="inp-name" placeholder="Enter your full name" required/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mobile number *</label>
+          <div class="phone-input-wrapper">
+            <div class="phone-prefix">+91</div>
+            <input class="form-input" type="tel" id="inp-phone" placeholder="10-digit number" maxlength="10" required/>
+          </div>
+        </div>
+
+        <label class="plans-label">Select your plan *</label>
+        <div class="plans-grid">
+          <div class="plan-card" onclick="selectPlan(this,'199')">
+            <div class="plan-price">₹199 <span class="plan-price-sub">/mo</span></div>
+            <div class="plan-speed">30 Mbps Speed</div>
+            <div class="plan-otts">
+              <div class="ott-icon ott-hotstar">H</div>
+              <div class="ott-icon ott-prime">P</div>
+            </div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this,'299')">
+            <div class="plan-price">₹299 <span class="plan-price-sub">/mo</span></div>
+            <div class="plan-speed">100 Mbps Speed</div>
+            <div class="plan-otts">
+              <div class="ott-icon ott-netflix">N</div>
+              <div class="ott-icon ott-hotstar">H</div>
+              <div class="ott-icon ott-prime">P</div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="selected-plan" value=""/>
+        <button type="submit" class="form-submit" id="submit-btn">Get AI Call Now</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="success-modal">
+  <div class="success-modal">
+    <div class="success-icon">✓</div>
+    <div class="success-title">You're all set!</div>
+    <div class="success-desc">Monika, our AI agent, will call you in the next 60 seconds.</div>
+    <div class="success-detail">
+      <div><strong>Number:</strong> <span id="confirm-phone"></span></div>
+      <div><strong>Plan:</strong> <span id="confirm-plan"></span></div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);color:var(--gray-500);font-size:12px;"><strong>Call initiated via VAPI</strong></div>
+    </div>
+    <button class="success-cta" onclick="closeSuccess()">Got it</button>
+  </div>
+</div>
+
+<script>
+// VAPI Configuration
+const VAPI_CONFIG = {
+  apiKey: '38329966-e64b-4d89-b38c-a4100967a3dd', // Public API Key
+  assistantId: 'ddd7c231-e11a-4199-b5c4-9aab68a4717d', // Monika agent
+  apiBaseUrl: 'https://api.vapi.ai'
+};
+
+let selectedPlan = '';
+
+function openForm(){
+  document.getElementById('form-modal').classList.add('open');
+}
+
+function closeForm(){
+  document.getElementById('form-modal').classList.remove('open');
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('selected-plan').value = '';
+  selectedPlan = '';
+  document.querySelectorAll('.plan-card').forEach(e => e.classList.remove('selected'));
+}
+
+function selectPlan(elem, price){
+  document.querySelectorAll('.plan-card').forEach(e => e.classList.remove('selected'));
+  elem.classList.add('selected');
+  selectedPlan = price;
+  document.getElementById('selected-plan').value = price;
+}
+
+async function submitForm(e){
+  e.preventDefault();
+  
+  const name = document.getElementById('inp-name').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const plan = document.getElementById('selected-plan').value;
+  
+  if(!name || !phone || !plan){
+    alert('Please fill all fields and select a plan');
+    return;
+  }
+  
+  // Disable button and show loading state
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  submitBtn.textContent = 'Calling...';
+  
+  try {
+    await initiateVAPICall(name, phone, plan);
+    showSuccess(phone, plan);
+    closeForm();
+  } catch(error) {
+    console.error('Error initiating call:', error);
+    alert('Failed to initiate call. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('loading');
+    submitBtn.textContent = 'Get AI Call Now';
+  }
+}
+
+async function initiateVAPICall(name, phone, plan){
+  const fullPhone = `+91${phone}`;
+  
+  // Prepare customer data to pass to the agent
+  const systemMessage = `You are Monika, an AI Lead Qualification Agent. You are calling ${name} who is interested in the ₹${plan}/month plan. Engage naturally, confirm their interest, and gather any additional information about their needs.`;
+  
+  const requestBody = {
+    assistantId: VAPI_CONFIG.assistantId,
+    phoneNumber: fullPhone,
+    customData: {
+      customerName: name,
+      selectedPlan: plan,
+      timestamp: new Date().toISOString()
+    }
+  };
+  
+  const response = await fetch(`${VAPI_CONFIG.apiBaseUrl}/call`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${VAPI_CONFIG.apiKey}`
+    },
+    body: JSON.stringify(requestBody)
+  });
+  
+  if(!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`API Error: ${response.status} - ${errorData.message || 'Unknown error'}`);
+  }
+  
+  const data = await response.json();
+  console.log('VAPI Call initiated:', data);
+  return data;
+}
+
+function showSuccess(phone, plan){
+  document.getElementById('confirm-phone').textContent = '+91 ' + phone;
+  document.getElementById('confirm-plan').textContent = '₹' + plan + ' per month';
+  document.getElementById('success-modal').classList.add('open');
+}
+
+function closeSuccess(){
+  document.getElementById('success-modal').classList.remove('open');
+  window.location.href = '/';
+}
+</script>
+
+</body>
+</html>
