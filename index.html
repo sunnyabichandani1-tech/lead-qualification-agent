@@ -745,21 +745,22 @@ async function submitForm(e){
 async function sendToMakeWebhook(name, phone, plan){
   const fullPhone = `+91${phone}`;
   
-  const formData = new FormData();
-  formData.append('name', name);
-  formData.append('phone', fullPhone);
-  formData.append('plan', '₹' + plan + '/month');
-  formData.append('timestamp', new Date().toLocaleString('en-IN'));
-  formData.append('source', 'AI Lead Qualification Agent (GitHub Pages)');
-  formData.append('formUrl', window.location.href);
+  const payload = {
+    name: name,
+    phone: fullPhone,
+    plan: plan
+  };
   
   console.log('Sending to webhook:', WEBHOOK_CONFIG.url);
-  console.log('FormData: name, phone, plan, timestamp, source');
+  console.log('Payload:', payload);
   
   try {
     const response = await fetch(WEBHOOK_CONFIG.url, {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
     
     console.log('Response status:', response.status);
