@@ -684,11 +684,9 @@ body{
 </div>
 
 <script>
-// VAPI Configuration
-const VAPI_CONFIG = {
-  apiKey: '38329966-e64b-4d89-b38c-a4100967a3dd', // Public API Key
-  assistantId: 'ddd7c231-e11a-4199-b5c4-9aab68a4717d', // Monika agent
-  apiBaseUrl: 'https://api.vapi.ai'
+// Make.com Webhook Configuration
+const WEBHOOK_CONFIG = {
+  url: 'https://hook.us2.make.com/qs5qbpdpel7bleks8zocao9ji6wb11zr'
 };
 
 let selectedPlan = '';
@@ -732,7 +730,7 @@ async function submitForm(e){
   submitBtn.textContent = 'Calling...';
   
   try {
-    await initiateVAPICall(name, phone, plan);
+    await sendToMakeWebhook(name, phone, plan);
     showSuccess(phone, plan);
     closeForm();
   } catch(error) {
@@ -744,38 +742,32 @@ async function submitForm(e){
   }
 }
 
-async function initiateVAPICall(name, phone, plan){
+async function sendToMakeWebhook(name, phone, plan){
   const fullPhone = `+91${phone}`;
   
-  // Prepare customer data to pass to the agent
-  const systemMessage = `You are Monika, an AI Lead Qualification Agent. You are calling ${name} who is interested in the ₹${plan}/month plan. Engage naturally, confirm their interest, and gather any additional information about their needs.`;
-  
-  const requestBody = {
-    assistantId: VAPI_CONFIG.assistantId,
-    phoneNumber: fullPhone,
-    customData: {
-      customerName: name,
-      selectedPlan: plan,
-      timestamp: new Date().toISOString()
-    }
+  const payload = {
+    timestamp: new Date().toLocaleString('en-IN'),
+    name: name,
+    phone: fullPhone,
+    plan: '₹' + plan + '/month',
+    source: 'AI Lead Qualification Agent (GitHub Pages)',
+    formUrl: window.location.href
   };
   
-  const response = await fetch(`${VAPI_CONFIG.apiBaseUrl}/call`, {
+  const response = await fetch(WEBHOOK_CONFIG.url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${VAPI_CONFIG.apiKey}`
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(requestBody)
+    body: JSON.stringify(payload)
   });
   
   if(!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`API Error: ${response.status} - ${errorData.message || 'Unknown error'}`);
+    throw new Error(`Webhook Error: ${response.status}`);
   }
   
   const data = await response.json();
-  console.log('VAPI Call initiated:', data);
+  console.log('Lead sent to Make.com:', data);
   return data;
 }
 
